@@ -14,9 +14,9 @@ export class TodoService {
 
   create(createTodoDto: CreateTodoDto): Todo {
     const todo = new Todo();
+
     todo.id = Math.max(...this.todos.map(todo => todo.id)) + 1;
     todo.description = createTodoDto.description;
-    // todo.done = false;
 
     this.todos.push(todo);
     return todo;
@@ -33,8 +33,18 @@ export class TodoService {
     return todo;
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${ id } todo`;
+  update(id: number, updateTodoDto: UpdateTodoDto): Todo {
+
+    const { done, description } = updateTodoDto;
+
+    const todo = this.findOne(id);
+
+    todo.done = done !== undefined && done;
+    todo.description = description && description;
+
+    this.todos = this.todos.map(dbTodo => dbTodo.id === id ? todo : dbTodo);
+
+    return todo;
   }
 
   remove(id: number) {
